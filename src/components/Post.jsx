@@ -7,10 +7,17 @@ import {Comment} from './Comment';
 
 import styles from './Post.module.css';
 import { CodesandboxLogo } from 'phosphor-react';
+import { useState } from 'react';
 
 
 export function Post({author, publishedAt, content}){
-  console.log(publishedAt);
+
+ const[comments, setComments] = useState ([
+ 'Post muito legal! Gostei bastante!'
+ ])
+
+ const [newCommentText, setNewCommentText] = useState('')
+
 const publishedDateFormatted = format(publishedAt, "d 'de' LLL 'às' HH:mm'h'", {
   locale:ptBR,
 })
@@ -19,6 +26,20 @@ const publishedDateRelativeToNow = formatDistanceToNow(publishedAt, {
   locale: ptBR,
   addSuffix:true,
 })
+
+function handleCreateNewComment(){
+
+  event.preventDefault()
+
+  setComments([...comments, newCommentText])
+  setNewCommentText('');
+
+
+}
+
+function handleNewCommentChange(){
+  setNewCommentText(event.target.value)
+}
 
   return(
   <article className={styles.post}>
@@ -45,11 +66,14 @@ const publishedDateRelativeToNow = formatDistanceToNow(publishedAt, {
         })}
     </div>
   
-  <form className={styles.commentForm}>
+  <form onSubmit={handleCreateNewComment} className={styles.commentForm}>
       <strong>Deixe seu feedback</strong>
 
       <textarea
+      name="comment"
       placeholder="Deixe um comentário"
+      value={newCommentText}
+      onChange={handleNewCommentChange}
       />
 
     <footer>
@@ -58,8 +82,9 @@ const publishedDateRelativeToNow = formatDistanceToNow(publishedAt, {
   </form>
 
 <div className={styles.commentList}>
-  <Comment/>
-  <Comment/>
+ {comments.map(comment => {
+  return <Comment content={comment}/>
+ })}
 </div>
 
   </article>
